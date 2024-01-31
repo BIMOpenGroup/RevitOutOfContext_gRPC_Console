@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+    <AddIn Type="Application">
+        <Name>GrpcExecutorConsoleAddinApp</Name>
+        <Assembly>C:\code\RevitOutOfContext_gRPC_Console\RevitGrpcExecutorConsoleAddin\bin\Debug\RevitGrpcExecutorConsoleAddin.dll</Assembly>
+        <AddInId>a0043e5f-a461-4006-9a41-e1aedf90ed60</AddInId>
+        <FullClassName>RevitGrpcExecutorConsoleAddin.RevitGrpcAddinApp</FullClassName>
+        <VendorId>BIM-openSorce</VendorId>
+    </AddIn>
+</RevitAddIns>

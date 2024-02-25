@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34202.233
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NETFOutOfContext_gRPC_Client", "RevitOutOfContext_gRPC_Client\NETFOutOfContext_gRPC_Client.csproj", "{57778AD3-57E4-4296-87D4-4958B96764E3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NETFOutOfContext_gRPC_Client", "NETFOutOfContext_gRPC_Client\NETFOutOfContext_gRPC_Client.csproj", "{440F142E-DD69-4176-87C7-957ED7627CA0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevitAddinOutOfContext_gRPC_Client", "RevitGrpcExecutorConsoleAddin\RevitAddinOutOfContext_gRPC_Client.csproj", "{64400B04-9DBE-4464-9A6F-4276AC34D338}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevitAddinOutOfContext_gRPC_Client", "RevitAddinOutOfContext_gRPC_Client\RevitAddinOutOfContext_gRPC_Client.csproj", "{6DC1856E-24BE-4A81-902D-48719849740D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,19 +13,19 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{57778AD3-57E4-4296-87D4-4958B96764E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{57778AD3-57E4-4296-87D4-4958B96764E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{57778AD3-57E4-4296-87D4-4958B96764E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{57778AD3-57E4-4296-87D4-4958B96764E3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{64400B04-9DBE-4464-9A6F-4276AC34D338}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{64400B04-9DBE-4464-9A6F-4276AC34D338}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{64400B04-9DBE-4464-9A6F-4276AC34D338}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{64400B04-9DBE-4464-9A6F-4276AC34D338}.Release|Any CPU.Build.0 = Release|Any CPU
+		{440F142E-DD69-4176-87C7-957ED7627CA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{440F142E-DD69-4176-87C7-957ED7627CA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{440F142E-DD69-4176-87C7-957ED7627CA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{440F142E-DD69-4176-87C7-957ED7627CA0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DC1856E-24BE-4A81-902D-48719849740D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DC1856E-24BE-4A81-902D-48719849740D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DC1856E-24BE-4A81-902D-48719849740D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DC1856E-24BE-4A81-902D-48719849740D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {B9C0D6C7-4B63-4A7A-965B-904644CCCD87}
+		SolutionGuid = {585ED025-2DED-40B2-BDD0-F1926EA7029B}
 	EndGlobalSection
 EndGlobal

@@ -5,7 +5,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace RevitOutOfContext_gRPC_Client
+namespace NETFOutOfContext_gRPC_Client
 {
     internal class Program
     {
@@ -17,26 +17,18 @@ namespace RevitOutOfContext_gRPC_Client
             while (true)
             {
                 var handler = new GrpcWebHandler(new HttpClientHandler());
-                //var loggerFactory = LoggerFactory.Create(logging =>
-                //{
-                //    logging.SetMinimumLevel(LogLevel.Debug);
-                //});
                 var options = new GrpcChannelOptions
                 {
                     HttpHandler = handler,
-                    //LoggerFactory = loggerFactory
-                    //Credentials = ChannelCredentials.Create(ChannelCredentials.Insecure, credentials)
                 };
-                options.UnsafeUseInsecureChannelCallCredentials = true;
+                //options.UnsafeUseInsecureChannelCallCredentials = true;
                 var channel = GrpcChannel.ForAddress("http://localhost:5064", options);
 
                 var client = new Greeter.GreeterClient(channel);
-                //var reply = client.HearHello(new Empty());
-                //Console.WriteLine(reply.Message);
                 var userName = Environment.UserName;
 
-                var text = Console.ReadLine();
-                var helloRequest = new HelloRequest { Name = userName, Text = text };
+                //var text = Console.ReadLine();
+                var helloRequest = new HelloRequest { Name = userName, Text = "NETFOutOfContext_gRPC_Client" };
                 var reply2 = client.SayHello(helloRequest);
                 Console.WriteLine(reply2.Message);
                 var readKey = Console.ReadKey();

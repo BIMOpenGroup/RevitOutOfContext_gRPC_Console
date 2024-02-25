@@ -1,14 +1,15 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // Общие сведения об этой сборке предоставляются следующим набором
 // набора атрибутов. Измените значения этих атрибутов для изменения сведений,
 // связанные с этой сборкой.
-[assembly: AssemblyTitle("RevitOutOfContext_gRPC_Client")]
+[assembly: AssemblyTitle("NETFOutOfContext_gRPC_Client")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("RevitOutOfContext_gRPC_Client")]
+[assembly: AssemblyProduct("NETFOutOfContext_gRPC_Client")]
 [assembly: AssemblyCopyright("Copyright ©  2024")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -19,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // Следующий GUID представляет идентификатор typelib, если этот проект доступен из модели COM
-[assembly: Guid("57778ad3-57e4-4296-87d4-4958b96764e3")]
+[assembly: Guid("440f142e-dd69-4176-87c7-957ed7627ca0")]
 
 // Сведения о версии сборки состоят из указанных ниже четырех значений:
 //

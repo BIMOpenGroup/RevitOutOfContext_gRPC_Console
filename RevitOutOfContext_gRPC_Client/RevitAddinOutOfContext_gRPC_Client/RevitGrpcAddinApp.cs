@@ -3,13 +3,13 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Events;
 using System;
-using System.Collections.Generic;
 using Grpc.Net.Client;
 using Grpc.Net.Client.Web;
-using GrpcGreeterClient;
 using System.Net.Http;
+using Autodesk.Revit.DB.Events;
+using RevitOutOfContext_gRPC_ProtosF;
 
-namespace RevitGrpcExecutorConsoleAddin
+namespace RevitAddinOutOfContext_gRPC_Client
 {
     [Transaction(TransactionMode.Manual)]
     [RegenerationAttribute(RegenerationOption.Manual)]
@@ -21,7 +21,8 @@ namespace RevitGrpcExecutorConsoleAddin
         {
             try
             {
-                uiControlApplication.Idling += OnIdling;
+                //uiControlApplication.Idling += OnIdling;
+                uiControlApplication.ControlledApplication.ApplicationInitialized += OnInitialized;
                 _uiControlApplication = uiControlApplication;
                 _userName = Environment.UserName;
                 return Result.Succeeded;
@@ -30,6 +31,29 @@ namespace RevitGrpcExecutorConsoleAddin
             {
                 TaskDialog.Show("fail", ex.Message);
                 return Result.Cancelled;
+            }
+        }
+
+        public void OnInitialized(object sender, ApplicationInitializedEventArgs e)
+        {
+            try
+            {
+                var handler = new GrpcWebHandler(new HttpClientHandler());
+                var options = new GrpcChannelOptions
+                {
+                    HttpHandler = handler,
+                };
+                options.UnsafeUseInsecureChannelCallCredentials = true;
+                var channel = GrpcChannel.ForAddress("http://localhost:5064", options);
+
+                var client = new Greeter.GreeterClient(channel);
+                var userName = Environment.UserName;
+                var helloRequest = new HelloRequest { Name = userName, Text = _uiControlApplication.ControlledApplication.VersionName };
+                var reply2 = client.SayHello(helloRequest);
+            }
+            catch (Exception ex)
+            {
+                TaskDialog.Show("Exception", ex.Message);
             }
         }
 

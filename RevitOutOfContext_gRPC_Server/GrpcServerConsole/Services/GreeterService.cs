@@ -1,8 +1,9 @@
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
-using GrpcService1;
 using Microsoft.Extensions.Logging;
+using RevitOutOfContext_gRPC_ProtosF;
 
-namespace GrpcService1.Services
+namespace GrpcServerConsole.Services
 {
     public class GreeterService : Greeter.GreeterBase
     {
@@ -15,7 +16,17 @@ namespace GrpcService1.Services
         public override Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context)
         {
             Console.WriteLine($"{request.Name}: {request.Text}");
-            var test = Console.ReadLine(); 
+            var test = Console.ReadLine();
+            return Task.FromResult(new HelloReply
+            {
+                Message = test
+            });
+        }
+
+        public override Task<HelloReply> HearHello(Empty request, ServerCallContext context)
+        {
+            //Console.WriteLine($"{request.Name}: {request.Text}");
+            var test = Console.ReadLine();
             return Task.FromResult(new HelloReply
             {
                 Message = test

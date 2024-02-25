@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34202.233
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RevitOutOfContext_gRPC_Protos", "RevitOutOfContext_gRPC_Protos\RevitOutOfContext_gRPC_Protos.csproj", "{1FB39BD2-78A2-46FF-BA4E-6A47B966900F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RevitOutOfContext_gRPC_ProtosF", "RevitOutOfContext_gRPC_ProtosF\RevitOutOfContext_gRPC_ProtosF.csproj", "{68272024-4B08-4ABA-B1AF-37E82C05EABD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1FB39BD2-78A2-46FF-BA4E-6A47B966900F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FB39BD2-78A2-46FF-BA4E-6A47B966900F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FB39BD2-78A2-46FF-BA4E-6A47B966900F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FB39BD2-78A2-46FF-BA4E-6A47B966900F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68272024-4B08-4ABA-B1AF-37E82C05EABD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68272024-4B08-4ABA-B1AF-37E82C05EABD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68272024-4B08-4ABA-B1AF-37E82C05EABD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68272024-4B08-4ABA-B1AF-37E82C05EABD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A3D2A8D3-765D-4345-ACA7-76D068A8A6E0}
+	EndGlobalSection
+EndGlobal

@@ -1,8 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Grpc.Net.Client;
-using GrpcGreeterClient;
+using RevitOutOfContext_gRPC_ProtosF;
 using Grpc.Core.Utils;
 using Google.Protobuf;
+using Grpc.Core;
 
 
 //The port number must match the port of the gRPC server.
@@ -16,8 +17,8 @@ while (true)
     var userName = Environment.UserName;
 
     var text = Console.ReadLine();
-    var reply = await client.SayHelloAsync(
-                      new HelloRequest { Name = userName, Text = text });
+    CallOptions optionss = new CallOptions();
+    HelloReply reply = client.SayHello(new HelloRequest { Name = userName, Text = text }, optionss);
     Console.WriteLine(reply.Message);
     var test = Console.ReadKey();
     var test2 = test.Key.ToString();

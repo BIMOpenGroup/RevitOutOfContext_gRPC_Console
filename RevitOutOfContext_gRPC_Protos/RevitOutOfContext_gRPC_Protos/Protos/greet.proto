@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option csharp_namespace = "GrpcGreeterClient";
+option csharp_namespace = "RevitOutOfContext_gRPC_Protos";
 
 package greet;
 
@@ -10,7 +10,7 @@ service Greeter {
   rpc SayHello (HelloRequest) returns (HelloReply);
 }
 
-// The request message containing the user's name and text.
+// The request message containing the user's name.
 message HelloRequest {
   string name = 1;
   string text = 2;

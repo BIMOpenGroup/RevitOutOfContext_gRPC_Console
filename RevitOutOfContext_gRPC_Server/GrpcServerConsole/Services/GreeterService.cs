@@ -15,10 +15,10 @@ namespace GrpcServerConsole.Services
             _name = "test";
         }
 
-        public GreeterService(string name)
-        {
-            _name = name;
-        }
+        //public GreeterService(string name)
+        //{
+        //    _name = name;
+        //}
 
         public override Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context)
         {

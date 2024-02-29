@@ -13,6 +13,7 @@ using System.IO;
 using GrpcDotNetNamedPipes;
 using static System.Net.Mime.MediaTypeNames;
 using Google.Protobuf.WellKnownTypes;
+using static System.Net.Http.WinHttpHandler;
 //using RevitOutOfContext_gRPC_ProtosLocal;
 
 namespace RevitAddinOutOfContext_gRPC_Client
@@ -34,7 +35,9 @@ namespace RevitAddinOutOfContext_gRPC_Client
                 _userName = Environment.UserName;
                 _version = _uiControlApplication.ControlledApplication.VersionName;
                 //System.AppDomain currentDomain = System.AppDomain.CurrentDomain;
-
+                //Assembly.LoadFrom("C:\\code\\RevitOutOfContext_gRPC\\RevitOutOfContext_gRPC_Client\\RevitAddinOutOfContext_gRPC_Client\\bin\\Debug\\System.Diagnostics.DiagnosticSource.dll");
+                //AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += CurrentDomain_AssemblyResolve;
+                //AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
                 //currentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
                 return Result.Succeeded;
             }
@@ -69,14 +72,14 @@ namespace RevitAddinOutOfContext_gRPC_Client
         {
             try
             {
-                //var handler = new GrpcWebHandler(new HttpClientHandler());
-                //var options = new GrpcChannelOptions
-                //{
-                //    HttpHandler = handler,
-                //};
-                //options.UnsafeUseInsecureChannelCallCredentials = true;
-                //var channel = GrpcChannel.ForAddress("http://localhost:5064", options);
-                var channel = new NamedPipeChannel(".", "MY_PIPE_NAME");
+                var handler = new GrpcWebHandler(new HttpClientHandler());
+                var options = new GrpcChannelOptions
+                {
+                    HttpHandler = handler,
+                };
+                options.UnsafeUseInsecureChannelCallCredentials = true;
+                var channel = GrpcChannel.ForAddress("http://localhost:5064", options);
+                //var channel = new NamedPipeChannel(".", "MY_PIPE_NAME");
                 var client = new Greeter.GreeterClient(channel);
                 var helloRequest = new HelloRequest { Name = $"{_userName} {_version}", Text = $"RevitAddinOutOfContext_gRPC_Client {DateTime.Now}" };
                 var reply2 = await client.SayHelloAsync(helloRequest);
@@ -101,18 +104,18 @@ namespace RevitAddinOutOfContext_gRPC_Client
         {
             try
             {
-                var channel = GrpcChannel.ForAddress("https://localhost:5064", new GrpcChannelOptions
-                {
-                    HttpHandler = new GrpcWebHandler(new HttpClientHandler())
-                });
+                //var channel = GrpcChannel.ForAddress("https://localhost:5064", new GrpcChannelOptions
+                //{
+                //    HttpHandler = new GrpcWebHandler(new HttpClientHandler())
+                //});
 
-                var client = new Greeter.GreeterClient(channel);
+                //var client = new Greeter.GreeterClient(channel);
 
-                var userName = Environment.UserName;
+                //var userName = Environment.UserName;
 
-                var text = "Console.ReadLine()";
-                var reply = client.SayHello(
-                                  new HelloRequest { Name = userName, Text = text });
+                //var text = "Console.ReadLine()";
+                //var reply = client.SayHello(
+                //                  new HelloRequest { Name = userName, Text = text });
 
                 //var uiapp = (UIApplication)sender;
                 //var uidoc = uiapp.ActiveUIDocument;

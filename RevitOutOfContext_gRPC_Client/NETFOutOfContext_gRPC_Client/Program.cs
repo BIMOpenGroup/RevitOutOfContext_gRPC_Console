@@ -17,15 +17,15 @@ namespace NETFOutOfContext_gRPC_Client
             Console.WriteLine("Target framework name: " + AppDomain.CurrentDomain.SetupInformation.TargetFrameworkName);
             while (true)
             {
-                //var handler = new GrpcWebHandler(new HttpClientHandler());
-                //var options = new GrpcChannelOptions
-                //{
-                //    HttpHandler = handler,
-                //};
-                ////options.UnsafeUseInsecureChannelCallCredentials = true;
-                //var channel = GrpcChannel.ForAddress("http://localhost:5064", options);
+                var handler = new GrpcWebHandler(new HttpClientHandler());
+                var options = new GrpcChannelOptions
+                {
+                    HttpHandler = handler,
+                };
+                //options.UnsafeUseInsecureChannelCallCredentials = true;
+                var channel = GrpcChannel.ForAddress("http://localhost:5064", options);
 
-                var channel = new NamedPipeChannel(".", "MY_PIPE_NAME");
+                //var channel = new NamedPipeChannel(".", "MY_PIPE_NAME");
 
                 var client = new Greeter.GreeterClient(channel);
                 var userName = Environment.UserName;

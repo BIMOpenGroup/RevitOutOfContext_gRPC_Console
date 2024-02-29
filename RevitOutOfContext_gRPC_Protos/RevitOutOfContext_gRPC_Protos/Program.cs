@@ -1,4 +1,4 @@
-﻿namespace RevitOutOfContext_gRPC_ProtosF
+﻿namespace RevitOutOfContext_gRPC_Protos
 {
     internal class Program
     {

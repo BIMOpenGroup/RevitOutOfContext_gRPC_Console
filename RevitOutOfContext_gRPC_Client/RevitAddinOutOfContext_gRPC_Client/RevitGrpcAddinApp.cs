@@ -8,6 +8,12 @@ using Grpc.Net.Client.Web;
 using System.Net.Http;
 using Autodesk.Revit.DB.Events;
 using RevitOutOfContext_gRPC_ProtosF;
+using System.Reflection;
+using System.IO;
+using GrpcDotNetNamedPipes;
+using static System.Net.Mime.MediaTypeNames;
+using Google.Protobuf.WellKnownTypes;
+//using RevitOutOfContext_gRPC_ProtosLocal;
 
 namespace RevitAddinOutOfContext_gRPC_Client
 {
@@ -17,6 +23,7 @@ namespace RevitAddinOutOfContext_gRPC_Client
     {
         public static UIControlledApplication _uiControlApplication;
         public string _userName;
+        public string _version;
         public Result OnStartup(UIControlledApplication uiControlApplication)
         {
             try
@@ -25,6 +32,10 @@ namespace RevitAddinOutOfContext_gRPC_Client
                 uiControlApplication.ControlledApplication.ApplicationInitialized += OnInitialized;
                 _uiControlApplication = uiControlApplication;
                 _userName = Environment.UserName;
+                _version = _uiControlApplication.ControlledApplication.VersionName;
+                //System.AppDomain currentDomain = System.AppDomain.CurrentDomain;
+
+                //currentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
                 return Result.Succeeded;
             }
             catch (Exception ex)
@@ -34,22 +45,44 @@ namespace RevitAddinOutOfContext_gRPC_Client
             }
         }
 
-        public void OnInitialized(object sender, ApplicationInitializedEventArgs e)
+        System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender,ResolveEventArgs args)
+        {
+            if (args.Name.Contains("DiagnosticSource"))
+            {
+                string filename = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                filename = Path.Combine(filename, "System.Diagnostics.DiagnosticSource.dll");
+
+                if (File.Exists(filename))
+                {
+                    return System.Reflection.Assembly.LoadFrom(filename);
+                }
+            }
+            return null;
+        }
+
+        System.Reflection.Assembly currentDomain_AssemblyResolve(object sender,ResolveEventArgs args)
+        {
+            return Assembly.LoadFrom("C:\\code\\RevitOutOfContext_gRPC\\RevitOutOfContext_gRPC_Client\\RevitAddinOutOfContext_gRPC_Client\\bin\\Debug\\System.Diagnostics.DiagnosticSource.dll");
+        }
+
+        public async void OnInitialized(object sender, ApplicationInitializedEventArgs e)
         {
             try
             {
-                var handler = new GrpcWebHandler(new HttpClientHandler());
-                var options = new GrpcChannelOptions
-                {
-                    HttpHandler = handler,
-                };
-                options.UnsafeUseInsecureChannelCallCredentials = true;
-                var channel = GrpcChannel.ForAddress("http://localhost:5064", options);
-
+                //var handler = new GrpcWebHandler(new HttpClientHandler());
+                //var options = new GrpcChannelOptions
+                //{
+                //    HttpHandler = handler,
+                //};
+                //options.UnsafeUseInsecureChannelCallCredentials = true;
+                //var channel = GrpcChannel.ForAddress("http://localhost:5064", options);
+                var channel = new NamedPipeChannel(".", "MY_PIPE_NAME");
                 var client = new Greeter.GreeterClient(channel);
-                var userName = Environment.UserName;
-                var helloRequest = new HelloRequest { Name = userName, Text = _uiControlApplication.ControlledApplication.VersionName };
-                var reply2 = client.SayHello(helloRequest);
+                var helloRequest = new HelloRequest { Name = $"{_userName} {_version}", Text = $"RevitAddinOutOfContext_gRPC_Client {DateTime.Now}" };
+                var reply2 = await client.SayHelloAsync(helloRequest);
+                //var reply = client.HearHello(new Empty());
+                //Console.WriteLine(reply.Message);
+                string test = "";
             }
             catch (Exception ex)
             {

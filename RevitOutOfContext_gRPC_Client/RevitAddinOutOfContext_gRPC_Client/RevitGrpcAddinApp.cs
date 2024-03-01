@@ -14,6 +14,10 @@ using GrpcDotNetNamedPipes;
 using static System.Net.Mime.MediaTypeNames;
 using Google.Protobuf.WellKnownTypes;
 using static System.Net.Http.WinHttpHandler;
+using System.Diagnostics;
+using System.Net.Sockets;
+using System.Net;
+using System.Threading;
 //using RevitOutOfContext_gRPC_ProtosLocal;
 
 namespace RevitAddinOutOfContext_gRPC_Client
@@ -24,16 +28,21 @@ namespace RevitAddinOutOfContext_gRPC_Client
     {
         public static UIControlledApplication _uiControlApplication;
         public string _userName;
-        public string _version;
+        public string _versionName;
+        string _versionNum;
+        bool _requestRun = true;
+        Greeter.GreeterClient _client;
         public Result OnStartup(UIControlledApplication uiControlApplication)
         {
             try
             {
-                //uiControlApplication.Idling += OnIdling;
-                uiControlApplication.ControlledApplication.ApplicationInitialized += OnInitialized;
+
                 _uiControlApplication = uiControlApplication;
+                _uiControlApplication.ControlledApplication.ApplicationInitialized += OnInitialized;
+          
                 _userName = Environment.UserName;
-                _version = _uiControlApplication.ControlledApplication.VersionName;
+                _versionName = _uiControlApplication.ControlledApplication.VersionName;
+                _versionNum = _uiControlApplication.ControlledApplication.VersionNumber;
                 //System.AppDomain currentDomain = System.AppDomain.CurrentDomain;
                 //Assembly.LoadFrom("C:\\code\\RevitOutOfContext_gRPC\\RevitOutOfContext_gRPC_Client\\RevitAddinOutOfContext_gRPC_Client\\bin\\Debug\\System.Diagnostics.DiagnosticSource.dll");
                 //AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += CurrentDomain_AssemblyResolve;
@@ -68,6 +77,19 @@ namespace RevitAddinOutOfContext_gRPC_Client
             return Assembly.LoadFrom("C:\\code\\RevitOutOfContext_gRPC\\RevitOutOfContext_gRPC_Client\\RevitAddinOutOfContext_gRPC_Client\\bin\\Debug\\System.Diagnostics.DiagnosticSource.dll");
         }
 
+        public static string GetLocalIPAddress()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ip.ToString();
+                }
+            }
+            return "No network adapters with an IPv4 address in the system!";
+        }
+
         public async void OnInitialized(object sender, ApplicationInitializedEventArgs e)
         {
             try
@@ -80,17 +102,48 @@ namespace RevitAddinOutOfContext_gRPC_Client
                 options.UnsafeUseInsecureChannelCallCredentials = true;
                 var channel = GrpcChannel.ForAddress("http://localhost:5064", options);
                 //var channel = new NamedPipeChannel(".", "MY_PIPE_NAME");
-                var client = new Greeter.GreeterClient(channel);
-                var helloRequest = new HelloRequest { Name = $"{_userName} {_version}", Text = $"RevitAddinOutOfContext_gRPC_Client {DateTime.Now}" };
-                var reply2 = await client.SayHelloAsync(helloRequest);
-                //var reply = client.HearHello(new Empty());
-                //Console.WriteLine(reply.Message);
-                string test = "";
+                _client = new Greeter.GreeterClient(channel);
+
+                HelloToServer();
+                _uiControlApplication.Idling += OnIdling;
             }
             catch (Exception ex)
             {
                 TaskDialog.Show("Exception", ex.Message);
             }
+        }
+
+        async void HelloToServer()
+        {
+            try
+            {
+                new Thread(async () =>
+                {
+                    _requestRun = false;
+                    System.Threading.Thread.Sleep(1000);
+
+                    var procsId = Process.GetCurrentProcess().Id;
+                    var helloRequest = new HelloRequest
+                    {
+                        Name = $"{_userName} {_versionName} {procsId}",
+                        Text = $"RevitAddinOutOfContext_gRPC_Client {DateTime.Now}",
+                        RevitVersion = _versionNum,
+                        ProcesId = procsId.ToString(),
+                        IpAdress = GetLocalIPAddress()
+                    };
+                    var reply2 = await _client.SayHelloAsync(helloRequest);
+                    //var reply = client.HearHello(new Empty());
+                    //Console.WriteLine(reply.Message);
+                    string test = "";
+                    _requestRun = true;
+                }).Start();
+            }
+            catch (Exception ex)
+            {
+                _requestRun = true;
+                //TaskDialog.Show("Exception", ex.Message);
+            }
+
         }
 
         public Result OnShutdown(UIControlledApplication uiControlApplication)
@@ -104,31 +157,10 @@ namespace RevitAddinOutOfContext_gRPC_Client
         {
             try
             {
-                //var channel = GrpcChannel.ForAddress("https://localhost:5064", new GrpcChannelOptions
-                //{
-                //    HttpHandler = new GrpcWebHandler(new HttpClientHandler())
-                //});
-
-                //var client = new Greeter.GreeterClient(channel);
-
-                //var userName = Environment.UserName;
-
-                //var text = "Console.ReadLine()";
-                //var reply = client.SayHello(
-                //                  new HelloRequest { Name = userName, Text = text });
-
-                //var uiapp = (UIApplication)sender;
-                //var uidoc = uiapp.ActiveUIDocument;
-                //var selection = uidoc?.Selection;
-                //var doc = uidoc?.Document;
-                //if (selection != null)
-                //{
-                //    var elemsIds = selection.GetElementIds();
-                //    if (elemsIds.Count > 0)
-                //    {
-
-                //    }
-                //}
+                if (_requestRun)
+                {
+                    HelloToServer();
+                }
             }
             catch (Exception ex)
             {

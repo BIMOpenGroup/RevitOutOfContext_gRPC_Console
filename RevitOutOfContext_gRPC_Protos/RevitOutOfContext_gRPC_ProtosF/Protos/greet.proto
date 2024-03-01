@@ -16,6 +16,9 @@ service Greeter {
 message HelloRequest {
   string name = 1;
   string text = 2;
+  string revitVersion = 3;
+  string procesId = 4;
+  string ipAdress = 5;
 }
 
 // The response message containing the greetings.

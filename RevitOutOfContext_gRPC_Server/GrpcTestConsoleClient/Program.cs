@@ -18,8 +18,8 @@ while (true)
 
     var text = Console.ReadLine();
     CallOptions optionss = new CallOptions();
-    HelloReply reply = client.SayHello(new HelloRequest { Name = userName, Text = text }, optionss);
-    Console.WriteLine(reply.Message);
+    CommandReply reply = client.SayHello(new HelloRequest { Name = userName, Text = text }, optionss);
+    Console.WriteLine(reply.Command);
     var test = Console.ReadKey();
     var test2 = test.Key.ToString();
     if (test2 == "Q")

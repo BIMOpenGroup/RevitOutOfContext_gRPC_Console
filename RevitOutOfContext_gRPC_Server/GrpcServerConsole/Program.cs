@@ -4,22 +4,27 @@ using GrpcServerConsole.Services;
 using RevitOutOfContext_gRPC_ProtosF;
 using RSNiniManager;
 using Spectre.Console;
+using Grpc.AspNetCore.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace GrpcServerConsole
 {
     class Program
     {
-        static LaunchModes _launchModes;
-        public static ClientCollection _clientCollection;
+
 
         static void Main()
         {
+            LaunchModes launchModes = new LaunchModes();
             var builder = WebApplication.CreateBuilder();
             builder.Services.AddGrpc();
             builder.Services.AddGrpcClient<Greeter.GreeterClient>(o =>
             {
                 o.Address = new Uri("https://localhost:5064");
             });
+            builder.Services.AddGrpcHealthChecks()
+                .AddCheck("Sample", () => HealthCheckResult.Healthy());
+
             var app = builder.Build();
             // Additional configuration is required to successfully run gRPC on macOS.
             // For instructions on how to configure Kestrel and gRPC clients on macOS, visit https://go.microsoft.com/fwlink/?linkid=2099682
@@ -33,6 +38,7 @@ namespace GrpcServerConsole
                 app.UseGrpcWeb(new GrpcWebOptions { DefaultEnabled = true });
                 // Configure the HTTP request pipeline.
                 app.MapGrpcService<GreeterService>();
+                app.MapGrpcHealthChecksService();
                 app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. " +
                             "To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
                 app.Run();
@@ -45,8 +51,6 @@ namespace GrpcServerConsole
 
             Console.ReadLine();
 
-            _launchModes = new LaunchModes();
-            _clientCollection = new ClientCollection();
             while (true)
             {
                 AnsiConsole.Clear();
@@ -57,25 +61,25 @@ namespace GrpcServerConsole
                         .Title($"[underline {Colors.mainColor}]Select launch mode[/]\n")
                         .HighlightStyle(Colors.selectionStyle)
                         .PageSize(5)
-                        .AddChoices(new[] { "Run new Revits", "Current Revits", "Remove Revits", "Commands", "Off" })
+                        .AddChoices(new[] { "Run new Revits", "Current Revits", "Remove Revits", "Commands", "Server off" })
                     );
                 if (launchMode == "Run new Revits")
                 {
-                    _launchModes.RunRevits();
+                    launchModes.RunRevits();
                 }
                 else if (launchMode == "Current Revits")
                 {
-                    _launchModes.CurrentRevits();
+                    launchModes.CurrentRevits();
                 }
                 else if (launchMode == "Remove Revits")
                 {
-                    _launchModes.RemoveRevits();
+                    launchModes.RemoveRevits();
                 }
                 else if (launchMode == "Commands")
                 {
-                    _launchModes.Commands();
+                    launchModes.Commands();
                 }
-                else if (launchMode == "Off")
+                else if (launchMode == "Server off")
                 {
                     app.StopAsync();
                     app.DisposeAsync();

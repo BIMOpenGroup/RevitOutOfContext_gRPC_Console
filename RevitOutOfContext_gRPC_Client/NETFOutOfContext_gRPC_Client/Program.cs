@@ -33,7 +33,7 @@ namespace NETFOutOfContext_gRPC_Client
                 //var text = Console.ReadLine();
                 var helloRequest = new HelloRequest { Name = userName, Text = $"NETFOutOfContext_gRPC_Client {DateTime.Now}" };
                 var reply2 = client.SayHello(helloRequest);
-                Console.WriteLine(reply2.Message);
+                Console.WriteLine(reply2.Command);
                 var readKey = Console.ReadKey();
                 var key = readKey.Key.ToString();
                 if (key == "Q")
@@ -41,12 +41,6 @@ namespace NETFOutOfContext_gRPC_Client
                     return;
                 }
             }
-        }
-
-        static async Task<HelloReply> GetReply(Greeter.GreeterClient client, HelloRequest helloRequest)
-        {
-            var reply = await client.SayHelloAsync(helloRequest);
-            return reply;
         }
     }
 }

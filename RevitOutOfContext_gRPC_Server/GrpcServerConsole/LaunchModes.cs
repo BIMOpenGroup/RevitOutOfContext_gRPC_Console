@@ -2,6 +2,7 @@
 using Spectre.Console;
 using System.Diagnostics;
 
+
 namespace GrpcServerConsole
 {
     public class LaunchModes
@@ -13,28 +14,43 @@ namespace GrpcServerConsole
             Process.Start(path.Replace("*", "2023"));
         }
         public void CurrentRevits() {
-            AnsiConsole.Markup($"[bold {Colors.mainColor}]CurrentRevits[/]");
             AnsiConsole.Status()
                 .AutoRefresh(true)
                 .Spinner(Spinner.Known.Star)
                 .SpinnerStyle(Style.Parse("green bold"))
-                .Start("Thinking...", ctx =>
+                .Start("Search clients...", ctx =>
                 {
                     while (true)
                     {
+                        Thread.Sleep(1000);
                         AnsiConsole.Clear();
-                        var allClients = Program._clientCollection.GetCollection();
+                        AnsiConsole.Markup($"[bold {Colors.mainColor}]CurrentRevits[/]");
+                        AnsiConsole.Markup($"[{Colors.infoColor}]press [{Colors.attentionColor}]<esc>[/] to return[/]\n");
+                        var allClients = Common.clientCollection.GetCollection();
                         foreach (var client in allClients)
                         {
-                            AnsiConsole.MarkupLine($"{client.Key} {client.Value}\n");
+                            AnsiConsole.MarkupLine($"[{Colors.infoColor}]client ID: {client.Key}[/] client status: {client.Value.response} last command send: {client.Value.commandCondition}");
                         }
                         // Simulate some work
                         //AnsiConsole.MarkupLine("Doing some work...");
-                        ctx.Status("Thinking some more");
+                        ctx.Status("Refresh clients status");
                         ctx.Spinner(Spinner.Known.Star);
                         ctx.SpinnerStyle(Style.Parse("green"));
-                        Thread.Sleep(2000);
                         ctx.Refresh();
+                       
+                        try
+                        {
+                            var cts = new CancellationTokenSource(100);
+                            ConsoleKeyInfo readKeyResult = Task.Run(() => Console.ReadKey(true), cts.Token).Result;
+                            if (readKeyResult.Key == ConsoleKey.Escape)
+                            {
+                                break;
+                            }
+                        }
+                        catch (System.AggregateException ex)
+                        {
+
+                        }
                     }
                 });
             //AnsiConsole.Progress()
@@ -52,7 +68,10 @@ namespace GrpcServerConsole
             //    }
             //});
         }
-        public void RemoveRevits() { }
+        public void RemoveRevits() 
+        {
+            Common.ChangeCommand("ExitRevit");
+        }
         public void Commands() { }
     }
 }

@@ -60,7 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Google.Protobuf">
-      <Version>3.11.2</Version>
+      <Version>3.25.3</Version>
     </PackageReference>
     <PackageReference Include="Grpc.Core.Api">
       <Version>2.61.0</Version>

@@ -26,26 +26,42 @@ namespace GrpcServerConsole.Services
         //    _name = name;
         //}
 
-        public override Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context)
+        public override Task<CommandReply> SayHello(HelloRequest request, ServerCallContext context)
         {
             string unicId = $"{request.RevitVersion} {request.ProcesId} {request.IpAdress}";
-            string text = $"{request.Name}: {request.Text}";
-            Program._clientCollection.Add(unicId, text);
+            string text = $"{request.Name} {request.Text}";
+            Common.clientCollection.Add(unicId, text);
             //Console.WriteLine($"{request.Name}: {request.Text}");
             //var test = Console.ReadLine(); {request.RevitVersion} {request.ProcesId} {request.IpAdress}
-            return Task.FromResult(new HelloReply
+            if (!string.IsNullOrEmpty(Common.currentCommand) && !Common.clientCollection.Get(unicId).commandCondition)
             {
-                Message = $"server replay test {DateTime.Now}"
+                Common.clientCollection.Update(unicId, true);
+                return Task.FromResult(new CommandReply
+                {
+                    Command = Common.currentCommand
+                });
+            }
+            return Task.FromResult(new CommandReply
+            {
+                Command = ""
             });
         }
 
-        public override Task<HelloReply> HearHello(Empty request, ServerCallContext context)
+        //public override Task<HelloReply> HearHello(Empty request, ServerCallContext context)
+        //{
+        //    //Console.WriteLine($"{request.Name}: {request.Text}");
+        //    var test = Console.ReadLine();
+        //    return Task.FromResult(new HelloReply
+        //    {
+        //        Message = test
+        //    });
+        //}
+
+        public override Task<CommandReply> HearCommands(Empty request, ServerCallContext context)
         {
-            //Console.WriteLine($"{request.Name}: {request.Text}");
-            var test = Console.ReadLine();
-            return Task.FromResult(new HelloReply
+            return Task.FromResult(new CommandReply
             {
-                Message = test
+                //Message = test
             });
         }
     }

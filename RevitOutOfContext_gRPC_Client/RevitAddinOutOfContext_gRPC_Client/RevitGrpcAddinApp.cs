@@ -18,6 +18,9 @@ using System.Diagnostics;
 using System.Net.Sockets;
 using System.Net;
 using System.Threading;
+using Grpc.Health.V1;
+using System.Threading.Channels;
+using static Grpc.Health.V1.HealthCheckResponse.Types;
 //using RevitOutOfContext_gRPC_ProtosLocal;
 
 namespace RevitAddinOutOfContext_gRPC_Client
@@ -31,7 +34,9 @@ namespace RevitAddinOutOfContext_gRPC_Client
         public string _versionName;
         string _versionNum;
         bool _requestRun = true;
+        Health.HealthClient _clientHealth;
         Greeter.GreeterClient _client;
+
         public Result OnStartup(UIControlledApplication uiControlApplication)
         {
             try
@@ -94,6 +99,7 @@ namespace RevitAddinOutOfContext_gRPC_Client
         {
             try
             {
+                UIApplication uiapp = sender as UIApplication;
                 var handler = new GrpcWebHandler(new HttpClientHandler());
                 var options = new GrpcChannelOptions
                 {
@@ -102,9 +108,10 @@ namespace RevitAddinOutOfContext_gRPC_Client
                 options.UnsafeUseInsecureChannelCallCredentials = true;
                 var channel = GrpcChannel.ForAddress("http://localhost:5064", options);
                 //var channel = new NamedPipeChannel(".", "MY_PIPE_NAME");
+                _clientHealth = new Health.HealthClient(channel);
                 _client = new Greeter.GreeterClient(channel);
 
-                HelloToServer();
+                HelloToServer(uiapp);
                 _uiControlApplication.Idling += OnIdling;
             }
             catch (Exception ex)
@@ -113,10 +120,12 @@ namespace RevitAddinOutOfContext_gRPC_Client
             }
         }
 
-        async void HelloToServer()
+        async void HelloToServer(UIApplication uiapp)
         {
             try
             {
+                CommandReply commandReply = new CommandReply();
+                //System.Threading.Thread.Sleep(1000);
                 new Thread(async () =>
                 {
                     _requestRun = false;
@@ -125,13 +134,42 @@ namespace RevitAddinOutOfContext_gRPC_Client
                     var procsId = Process.GetCurrentProcess().Id;
                     var helloRequest = new HelloRequest
                     {
-                        Name = $"{_userName} {_versionName} {procsId}",
-                        Text = $"RevitAddinOutOfContext_gRPC_Client {DateTime.Now}",
+                        Name = $"{_userName}",
+                        Text = $"{DateTime.Now}",
                         RevitVersion = _versionNum,
                         ProcesId = procsId.ToString(),
                         IpAdress = GetLocalIPAddress()
                     };
-                    var reply2 = await _client.SayHelloAsync(helloRequest);
+                    try
+                    {
+                        var response = await _clientHealth.CheckAsync(new HealthCheckRequest());
+                        var status = response.Status;
+                        if (status == ServingStatus.Serving)
+                        {
+                            commandReply = await _client.SayHelloAsync(helloRequest);
+                        }
+                    }
+                    catch (Grpc.Core.RpcException ex)
+                    {
+                        
+                    }
+                    catch (Exception ex) 
+                    {
+                        TaskDialog.Show("Exception", ex.Message);
+                    }
+                    if (!string.IsNullOrEmpty(commandReply.Command))
+                    {
+                        PostableCommand postCommand;
+                        bool isFind = System.Enum.TryParse(commandReply.Command, out postCommand);
+                        if (isFind)
+                        {
+                            RevitCommandId id_addin = RevitCommandId.LookupPostableCommandId(postCommand);
+                            if (id_addin != null)
+                            {
+                                uiapp.PostCommand(id_addin);
+                            }
+                        }
+                    }
                     //var reply = client.HearHello(new Empty());
                     //Console.WriteLine(reply.Message);
                     string test = "";
@@ -141,7 +179,7 @@ namespace RevitAddinOutOfContext_gRPC_Client
             catch (Exception ex)
             {
                 _requestRun = true;
-                //TaskDialog.Show("Exception", ex.Message);
+                TaskDialog.Show("Exception", ex.Message);
             }
 
         }
@@ -157,9 +195,10 @@ namespace RevitAddinOutOfContext_gRPC_Client
         {
             try
             {
+                UIApplication uiapp = sender as UIApplication;
                 if (_requestRun)
                 {
-                    HelloToServer();
+                    HelloToServer(uiapp);
                 }
             }
             catch (Exception ex)

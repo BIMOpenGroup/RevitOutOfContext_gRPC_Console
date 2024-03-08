@@ -72,6 +72,25 @@ namespace GrpcServerConsole
         {
             Common.ChangeCommand("ExitRevit");
         }
-        public void Commands() { }
+        public void Commands() 
+        {
+            AnsiConsole.Clear();
+            AnsiConsole.Markup($"[bold {Colors.mainColor}]Commands[/] [{Colors.attentionColor}]https://www.revitapidocs.com/2017/f6ccdc1b-6ac3-9c49-d0bb-8a7d1877eab0.htm[/]\n");
+            AnsiConsole.Markup($"[{Colors.infoColor}]Promt command from PostableCommand [{Colors.attentionColor}]<esc>[/] to return[/]\n");
+            while (true)
+            {
+                string newCommand = Utils.ReadLineOrEsc();
+                if (string.IsNullOrEmpty(newCommand))
+                {
+                    break;
+                }
+                else
+                {
+                    Common.ChangeCommand(newCommand);
+                    AnsiConsole.Markup($"Command addet: [{Colors.selectionColor}]{newCommand}[/]\n");
+                }
+            }
+            Console.WriteLine("\n");
+        }
     }
 }

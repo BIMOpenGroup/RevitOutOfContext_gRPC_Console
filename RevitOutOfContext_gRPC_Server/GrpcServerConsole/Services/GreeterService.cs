@@ -8,6 +8,7 @@ namespace GrpcServerConsole.Services
     {
         //private readonly ILogger<GreeterService> _logger;
         //private string _name;
+
         private readonly Greeter.GreeterClient _client;
 
         public GreeterService(Greeter.GreeterClient client)

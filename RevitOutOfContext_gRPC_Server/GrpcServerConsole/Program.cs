@@ -11,8 +11,6 @@ namespace GrpcServerConsole
 {
     class Program
     {
-
-
         static void Main()
         {
             LaunchModes launchModes = new LaunchModes();
@@ -30,7 +28,7 @@ namespace GrpcServerConsole
             // For instructions on how to configure Kestrel and gRPC clients on macOS, visit https://go.microsoft.com/fwlink/?linkid=2099682
 
             // Add services to the container.
-
+            Common.clientCollection.CommandSend += PromtCommandSendEvent;
 
             new Thread(() =>
             {
@@ -90,6 +88,11 @@ namespace GrpcServerConsole
                     Console.WriteLine("no one will see this message if the program is working properly");
                 }
             }
+        }
+
+        static void PromtCommandSendEvent(string revitUnicId)
+        {
+            AnsiConsole.Markup($"[bold {Colors.mainColor}] {revitUnicId}[/]\n");
         }
     }
 }

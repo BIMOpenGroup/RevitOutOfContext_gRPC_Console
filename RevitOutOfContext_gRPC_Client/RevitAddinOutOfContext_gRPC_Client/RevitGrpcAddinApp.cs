@@ -1,27 +1,21 @@
 ﻿using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
+using Autodesk.Revit.DB.Events;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Events;
-using System;
+using Grpc.Health.V1;
 using Grpc.Net.Client;
 using Grpc.Net.Client.Web;
-using System.Net.Http;
-using Autodesk.Revit.DB.Events;
 using RevitOutOfContext_gRPC_ProtosF;
-using System.Reflection;
-using System.IO;
-using GrpcDotNetNamedPipes;
-using static System.Net.Mime.MediaTypeNames;
-using Google.Protobuf.WellKnownTypes;
-using static System.Net.Http.WinHttpHandler;
+using System;
 using System.Diagnostics;
-using System.Net.Sockets;
+using System.IO;
 using System.Net;
+using System.Net.Http;
+using System.Net.Sockets;
+using System.Reflection;
 using System.Threading;
-using Grpc.Health.V1;
-using System.Threading.Channels;
 using static Grpc.Health.V1.HealthCheckResponse.Types;
-//using RevitOutOfContext_gRPC_ProtosLocal;
 
 namespace RevitAddinOutOfContext_gRPC_Client
 {
@@ -44,15 +38,10 @@ namespace RevitAddinOutOfContext_gRPC_Client
 
                 _uiControlApplication = uiControlApplication;
                 _uiControlApplication.ControlledApplication.ApplicationInitialized += OnInitialized;
-          
+
                 _userName = Environment.UserName;
                 _versionName = _uiControlApplication.ControlledApplication.VersionName;
                 _versionNum = _uiControlApplication.ControlledApplication.VersionNumber;
-                //System.AppDomain currentDomain = System.AppDomain.CurrentDomain;
-                //Assembly.LoadFrom("C:\\code\\RevitOutOfContext_gRPC\\RevitOutOfContext_gRPC_Client\\RevitAddinOutOfContext_gRPC_Client\\bin\\Debug\\System.Diagnostics.DiagnosticSource.dll");
-                //AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += CurrentDomain_AssemblyResolve;
-                //AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
-                //currentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
                 return Result.Succeeded;
             }
             catch (Exception ex)
@@ -62,7 +51,7 @@ namespace RevitAddinOutOfContext_gRPC_Client
             }
         }
 
-        System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender,ResolveEventArgs args)
+        System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
             if (args.Name.Contains("DiagnosticSource"))
             {
@@ -77,7 +66,7 @@ namespace RevitAddinOutOfContext_gRPC_Client
             return null;
         }
 
-        System.Reflection.Assembly currentDomain_AssemblyResolve(object sender,ResolveEventArgs args)
+        System.Reflection.Assembly currentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
             return Assembly.LoadFrom("C:\\code\\RevitOutOfContext_gRPC\\RevitOutOfContext_gRPC_Client\\RevitAddinOutOfContext_gRPC_Client\\bin\\Debug\\System.Diagnostics.DiagnosticSource.dll");
         }
@@ -151,9 +140,9 @@ namespace RevitAddinOutOfContext_gRPC_Client
                     }
                     catch (Grpc.Core.RpcException ex)
                     {
-                        
+
                     }
-                    catch (Exception ex) 
+                    catch (Exception ex)
                     {
                         TaskDialog.Show("Exception", ex.Message);
                     }
@@ -187,7 +176,6 @@ namespace RevitAddinOutOfContext_gRPC_Client
         public Result OnShutdown(UIControlledApplication uiControlApplication)
         {
             uiControlApplication.Idling -= OnIdling;
-            //_serverDispatcher.ReciveData -= OnReciveData;
             return Result.Succeeded;
         }
 

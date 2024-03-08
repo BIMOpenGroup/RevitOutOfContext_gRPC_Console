@@ -7,7 +7,7 @@
 
         public static void ChangeCommand(string newCommand)
         {
-            if (currentCommand != newCommand) 
+            if (currentCommand != newCommand)
             {
                 var collection = clientCollection.GetCollection();
                 foreach (var item in collection)

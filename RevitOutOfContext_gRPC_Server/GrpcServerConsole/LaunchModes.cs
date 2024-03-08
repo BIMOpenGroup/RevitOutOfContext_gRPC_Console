@@ -7,13 +7,14 @@ namespace GrpcServerConsole
 {
     public class LaunchModes
     {
-        public void RunRevits() 
+        public void RunRevits()
         {
             string path = "C:\\Program Files\\Autodesk\\Revit *\\Revit.exe";
             Process.Start(path.Replace("*", "2022"));
             Process.Start(path.Replace("*", "2023"));
         }
-        public void CurrentRevits() {
+        public void CurrentRevits()
+        {
             AnsiConsole.Status()
                 .AutoRefresh(true)
                 .Spinner(Spinner.Known.Star)
@@ -37,7 +38,7 @@ namespace GrpcServerConsole
                         ctx.Spinner(Spinner.Known.Star);
                         ctx.SpinnerStyle(Style.Parse("green"));
                         ctx.Refresh();
-                       
+
                         try
                         {
                             var cts = new CancellationTokenSource(100);
@@ -53,26 +54,12 @@ namespace GrpcServerConsole
                         }
                     }
                 });
-            //AnsiConsole.Progress()
-            //.Start(ctx =>
-            //{
-            //    var allClients = Program._clientCollection.GetCollection();
-            //    // Define tasks
-            //    var task1 = ctx.AddTask("[green]Reticulating splines[/]");
-            //    var task2 = ctx.AddTask("[green]Folding space[/]");
-
-            //    while (!ctx.IsFinished)
-            //    {
-            //        task1.Increment(1.5);
-            //        task2.Increment(0.5);
-            //    }
-            //});
         }
-        public void RemoveRevits() 
+        public void RemoveRevits()
         {
             Common.ChangeCommand("ExitRevit");
         }
-        public void Commands() 
+        public void Commands()
         {
             AnsiConsole.Clear();
             AnsiConsole.Markup($"[bold {Colors.mainColor}]Commands[/] [{Colors.attentionColor}]https://www.revitapidocs.com/2017/f6ccdc1b-6ac3-9c49-d0bb-8a7d1877eab0.htm[/]\n");

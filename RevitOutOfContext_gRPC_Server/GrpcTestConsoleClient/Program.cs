@@ -1,9 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using Grpc.Core;
 using Grpc.Net.Client;
 using RevitOutOfContext_gRPC_ProtosF;
-using Grpc.Core.Utils;
-using Google.Protobuf;
-using Grpc.Core;
 
 
 //The port number must match the port of the gRPC server.

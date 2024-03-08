@@ -1,11 +1,8 @@
-using GrpcDotNetNamedPipes;
-using GrpcServerConsole;
 using GrpcServerConsole.Services;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using RevitOutOfContext_gRPC_ProtosF;
 using RSNiniManager;
 using Spectre.Console;
-using Grpc.AspNetCore.HealthChecks;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace GrpcServerConsole
 {
@@ -24,10 +21,7 @@ namespace GrpcServerConsole
                 .AddCheck("Sample", () => HealthCheckResult.Healthy());
 
             var app = builder.Build();
-            // Additional configuration is required to successfully run gRPC on macOS.
-            // For instructions on how to configure Kestrel and gRPC clients on macOS, visit https://go.microsoft.com/fwlink/?linkid=2099682
 
-            // Add services to the container.
             Common.clientCollection.CommandSend += PromtCommandSendEvent;
 
             new Thread(() =>
@@ -88,6 +82,7 @@ namespace GrpcServerConsole
                     Console.WriteLine("no one will see this message if the program is working properly");
                 }
             }
+            Common.clientCollection.CommandSend -= PromtCommandSendEvent;
         }
 
         static void PromtCommandSendEvent(string revitUnicId)

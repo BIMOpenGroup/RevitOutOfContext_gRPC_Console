@@ -1,10 +1,8 @@
 ﻿using Grpc.Net.Client;
 using Grpc.Net.Client.Web;
-using GrpcDotNetNamedPipes;
 using RevitOutOfContext_gRPC_ProtosF;
 using System;
 using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace NETFOutOfContext_gRPC_Client
 {

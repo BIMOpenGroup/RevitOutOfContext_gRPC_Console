@@ -1,9 +1,8 @@
-﻿using Google.Protobuf.WellKnownTypes;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 
 namespace GrpcServerConsole
 {
-    public class ClientCollection: IDisposable
+    public class ClientCollection : IDisposable
     {
         private ConcurrentDictionary<string, ClientCondition> _collection;
         public delegate void OnCommandSendHandler(string revitUnicId);
@@ -17,7 +16,7 @@ namespace GrpcServerConsole
             {
 
             }
-            public ClientCondition(string res, bool comm )
+            public ClientCondition(string res, bool comm)
             {
                 response = res;
                 commandCondition = comm;
@@ -28,7 +27,8 @@ namespace GrpcServerConsole
             _collection = new ConcurrentDictionary<string, ClientCondition>();
         }
 
-        public void Add(string key, string value) {
+        public void Add(string key, string value)
+        {
             bool addet = _collection.TryAdd(key, new ClientCondition(value, false));
             if (!addet)
             {
@@ -36,16 +36,16 @@ namespace GrpcServerConsole
             }
         }
 
-        public ClientCondition Get(string key) 
+        public ClientCondition Get(string key)
         {
             var cond = new ClientCondition();
-            bool hasValue = _collection.TryGetValue(key, out cond); 
+            bool hasValue = _collection.TryGetValue(key, out cond);
             return cond;
         }
 
         public void Update(string key, bool commandCondition)
         {
-            if (_collection.ContainsKey(key)) 
+            if (_collection.ContainsKey(key))
             {
                 if (commandCondition)
                 {
@@ -61,7 +61,8 @@ namespace GrpcServerConsole
             }
         }
 
-        public ConcurrentDictionary<string, ClientCondition> GetCollection() { 
+        public ConcurrentDictionary<string, ClientCondition> GetCollection()
+        {
             return _collection;
         }
 

@@ -36,7 +36,7 @@ $ git clone https://github.com/BIMOpenGroup/RevitOutOfContext_gRPC_Console.git
  
 * Copy addin file RevitAddinOutOfContext_gRPC_Client.addin to your Revit plugins folder 
 
-* Run Server from VS
+* Run Server
 
 * Send commands 
 

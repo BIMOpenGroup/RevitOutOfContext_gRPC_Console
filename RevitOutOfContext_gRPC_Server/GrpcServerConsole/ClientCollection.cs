@@ -1,16 +1,18 @@
-﻿using System.Collections.Concurrent;
+﻿using RSNiniManager;
+using System.Collections.Concurrent;
 
 namespace GrpcServerConsole
 {
     public class ClientCollection : IDisposable
     {
         private ConcurrentDictionary<string, ClientCondition> _collection;
-        public delegate void OnCommandSendHandler(string revitUnicId);
+        public delegate void OnCommandSendHandler(string message);
         public event OnCommandSendHandler CommandSend;
         public class ClientCondition
         {
             public string? response { get; set; }
             public bool commandCondition { get; set; }
+            public string command { get; set; }
 
             public ClientCondition()
             {
@@ -27,36 +29,41 @@ namespace GrpcServerConsole
             _collection = new ConcurrentDictionary<string, ClientCondition>();
         }
 
-        public void Add(string key, string value)
+        public void TryAdd(string key, string res)
         {
-            bool addet = _collection.TryAdd(key, new ClientCondition(value, false));
+            bool addet = _collection.TryAdd(key, new ClientCondition(res, false));
             if (!addet)
             {
-                _collection[key] = new ClientCondition(value, _collection[key].commandCondition);
+                _collection[key].response = res;
             }
         }
 
         public ClientCondition Get(string key)
         {
-            var cond = new ClientCondition();
-            bool hasValue = _collection.TryGetValue(key, out cond);
-            return cond;
+            //var cond = new ClientCondition();
+            //bool hasValue = _collection.TryGetValue(key, out cond);
+            return _collection[key];
         }
 
-        public void Update(string key, bool commandCondition)
+        public void Update(string key, bool commandCondition, string command = null)
         {
             if (_collection.ContainsKey(key))
             {
                 if (commandCondition)
                 {
-                    CommandSend.Invoke($"command send to revit: {key}");
+                    CommandSend.Invoke($"command [bold {Colors.selectionColor}]{command}[/] [{Colors.infoColor}]added[/] to revit: {key}");
                 }
                 else
                 {
-                    CommandSend.Invoke($"command added to revit: {key}");
+                    CommandSend.Invoke($"command [bold {Colors.selectionColor}]{command}[/] [{Colors.infoColor}]send[/] to revit: {key}");
+
                 }
                 var cond = Get(key);
                 cond.commandCondition = commandCondition;
+                if (command != null)
+                {
+                    cond.command = command;
+                }
                 _collection[key] = cond;
             }
         }

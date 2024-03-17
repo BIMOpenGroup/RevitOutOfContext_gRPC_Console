@@ -7,14 +7,10 @@ namespace GrpcServerConsole
 {
     public class LaunchModes
     {
-        public void RunRevits()
-        {
-            string path = "C:\\Program Files\\Autodesk\\Revit *\\Revit.exe";
-            Process.Start(path.Replace("*", "2022"));
-            Process.Start(path.Replace("*", "2023"));
-        }
+
         public void CurrentRevits()
         {
+            AnsiConsole.Markup($"[bold {Colors.mainColor}]CurrentRevits[/]");
             AnsiConsole.Status()
                 .AutoRefresh(true)
                 .Spinner(Spinner.Known.Star)
@@ -23,10 +19,10 @@ namespace GrpcServerConsole
                 {
                     while (true)
                     {
-                        Thread.Sleep(1000);
+                        ctx.Refresh();
                         AnsiConsole.Clear();
-                        AnsiConsole.Markup($"[bold {Colors.mainColor}]CurrentRevits[/]");
                         AnsiConsole.Markup($"[{Colors.infoColor}]press [{Colors.attentionColor}]<esc>[/] to return[/]\n");
+                        Thread.Sleep(1000);
                         var allClients = Common.clientCollection.GetCollection();
                         foreach (var client in allClients)
                         {
@@ -34,10 +30,9 @@ namespace GrpcServerConsole
                         }
                         // Simulate some work
                         //AnsiConsole.MarkupLine("Doing some work...");
-                        ctx.Status("Refresh clients status");
+                        ctx.Status("To refresh clients status press any key");
                         ctx.Spinner(Spinner.Known.Star);
                         ctx.SpinnerStyle(Style.Parse("green"));
-                        ctx.Refresh();
 
                         try
                         {
@@ -55,13 +50,20 @@ namespace GrpcServerConsole
                     }
                 });
         }
+        public void RunRevits()
+        {
+            string path = "C:\\Program Files\\Autodesk\\Revit *\\Revit.exe";
+            Process.Start(path.Replace("*", "2022"));
+            Process.Start(path.Replace("*", "2023"));
+            return;
+        }
         public void RemoveRevits()
         {
             Common.ChangeCommand("ExitRevit");
         }
         public void Commands()
         {
-            AnsiConsole.Clear();
+            //AnsiConsole.Clear();
             AnsiConsole.Markup($"[bold {Colors.mainColor}]Commands[/] [{Colors.attentionColor}]https://www.revitapidocs.com/2017/f6ccdc1b-6ac3-9c49-d0bb-8a7d1877eab0.htm[/]\n");
             AnsiConsole.Markup($"[{Colors.infoColor}]Promt command from PostableCommand [{Colors.attentionColor}]<esc>[/] to return[/]\n");
             while (true)

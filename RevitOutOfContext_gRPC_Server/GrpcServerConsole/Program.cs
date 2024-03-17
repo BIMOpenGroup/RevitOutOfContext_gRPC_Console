@@ -10,7 +10,6 @@ namespace GrpcServerConsole
     {
         static void Main()
         {
-            LaunchModes launchModes = new LaunchModes();
             var builder = WebApplication.CreateBuilder();
             builder.Services.AddGrpc();
             builder.Services.AddGrpcClient<Greeter.GreeterClient>(o =>
@@ -40,9 +39,8 @@ namespace GrpcServerConsole
             //Greeter.BindService(server.ServiceBinder, new GreeterService("MY_PIPE_NAME"));
             //server.Start();
             //Console.WriteLine(server.ToString());
-
             Console.ReadLine();
-
+            LaunchModes launchModes = new LaunchModes();
             while (true)
             {
                 AnsiConsole.Clear();
@@ -53,23 +51,23 @@ namespace GrpcServerConsole
                         .Title($"[underline {Colors.mainColor}]Select launch mode[/]\n")
                         .HighlightStyle(Colors.selectionStyle)
                         .PageSize(5)
-                        .AddChoices(new[] { "Run new Revits", "Current Revits", "Remove Revits", "Commands", "Server off" })
+                        .AddChoices(new[] { "Current Revits", "Run Revits", "Commands", "Exit Revits", "Server off" })
                     );
-                if (launchMode == "Run new Revits")
-                {
-                    launchModes.RunRevits();
-                }
-                else if (launchMode == "Current Revits")
+                if (launchMode == "Current Revits")
                 {
                     launchModes.CurrentRevits();
                 }
-                else if (launchMode == "Remove Revits")
+                else if(launchMode == "Run Revits")
                 {
-                    launchModes.RemoveRevits();
+                    launchModes.RunRevits();
                 }
                 else if (launchMode == "Commands")
                 {
                     launchModes.Commands();
+                }
+                else if (launchMode == "Exit Revits")
+                {
+                    launchModes.RemoveRevits();
                 }
                 else if (launchMode == "Server off")
                 {
@@ -85,9 +83,9 @@ namespace GrpcServerConsole
             Common.clientCollection.CommandSend -= PromtCommandSendEvent;
         }
 
-        static void PromtCommandSendEvent(string revitUnicId)
+        static void PromtCommandSendEvent(string message)
         {
-            AnsiConsole.Markup($"[bold {Colors.mainColor}] {revitUnicId}[/]\n");
+            AnsiConsole.Markup($" {message}\n");
         }
     }
 }

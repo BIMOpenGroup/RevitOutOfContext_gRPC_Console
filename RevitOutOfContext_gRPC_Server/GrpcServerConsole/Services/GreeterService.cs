@@ -16,14 +16,15 @@ namespace GrpcServerConsole.Services
         public override Task<CommandReply> SayHello(HelloRequest request, ServerCallContext context)
         {
             string unicId = $"{request.RevitVersion} {request.ProcesId} {request.IpAdress}";
-            string text = $"{request.Name} {request.Text}";
-            Common.clientCollection.Add(unicId, text);
-            if (!string.IsNullOrEmpty(Common.currentCommand) && !Common.clientCollection.Get(unicId).commandCondition)
+            string res = $"{request.Name} {request.Text}";
+            Common.clientCollection.TryAdd(unicId, res);
+            var clientCond = Common.clientCollection.Get(unicId);
+            if (!string.IsNullOrEmpty(clientCond.command) && clientCond.commandCondition)
             {
-                Common.clientCollection.Update(unicId, true);
+                Common.clientCollection.Update(unicId, false);
                 return Task.FromResult(new CommandReply
                 {
-                    Command = Common.currentCommand
+                    Command = clientCond.command
                 });
             }
             return Task.FromResult(new CommandReply

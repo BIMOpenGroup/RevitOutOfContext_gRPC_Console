@@ -11,11 +11,11 @@
 ## Key Features
 There are three projects presented here:
 * Server project ( .NET 7) 
-  - [RevitOutOfContext_gRPC_Server](https://github.com/BIMOpenGroup/RevitOutOfContext_gRPC_Console/tree/master/RevitOutOfContext_gRPC_Server/GrpcServerConsole) 
+  - [RevitOutOfContext_gRPC_Server](RevitOutOfContext_gRPC_Server/GrpcServerConsole) 
 
 * Revit plugin (.NET Framework 4.8) project that checks 
 for the presence of an active server and requests commands from it
-  - [RevitOutOfContext_gRPC_Client](https://github.com/BIMOpenGroup/RevitOutOfContext_gRPC_Console/tree/master/RevitOutOfContext_gRPC_Client/RevitAddinOutOfContext_gRPC_Client)
+  - [RevitOutOfContext_gRPC_Client](RevitOutOfContext_gRPC_Client/RevitAddinOutOfContext_gRPC_Client)
 
 * Data schema (google.protobuf)
   - [RevitOutOfContext_gRPC_ProtosF](RevitOutOfContext_gRPC_Protos/RevitOutOfContext_gRPC_ProtosF)

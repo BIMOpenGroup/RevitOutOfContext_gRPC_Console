@@ -27,7 +27,7 @@ namespace RevitAddinOutOfContext_gRPC_Client
         public string _userName;
         public string _versionName;
         string _versionNum;
-        bool _requestRun = true;
+        bool _canRunRequest = true;
         Health.HealthClient _clientHealth;
         Greeter.GreeterClient _client;
 
@@ -51,25 +51,25 @@ namespace RevitAddinOutOfContext_gRPC_Client
             }
         }
 
-        System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
-        {
-            if (args.Name.Contains("DiagnosticSource"))
-            {
-                string filename = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-                filename = Path.Combine(filename, "System.Diagnostics.DiagnosticSource.dll");
+        //System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        //{
+        //    if (args.Name.Contains("DiagnosticSource"))
+        //    {
+        //        string filename = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+        //        filename = Path.Combine(filename, "System.Diagnostics.DiagnosticSource.dll");
 
-                if (File.Exists(filename))
-                {
-                    return System.Reflection.Assembly.LoadFrom(filename);
-                }
-            }
-            return null;
-        }
+        //        if (File.Exists(filename))
+        //        {
+        //            return System.Reflection.Assembly.LoadFrom(filename);
+        //        }
+        //    }
+        //    return null;
+        //}
 
-        System.Reflection.Assembly currentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
-        {
-            return Assembly.LoadFrom("C:\\code\\RevitOutOfContext_gRPC\\RevitOutOfContext_gRPC_Client\\RevitAddinOutOfContext_gRPC_Client\\bin\\Debug\\System.Diagnostics.DiagnosticSource.dll");
-        }
+        //System.Reflection.Assembly currentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        //{
+        //    return Assembly.LoadFrom("C:\\code\\RevitOutOfContext_gRPC\\RevitOutOfContext_gRPC_Client\\RevitAddinOutOfContext_gRPC_Client\\bin\\Debug\\System.Diagnostics.DiagnosticSource.dll");
+        //}
 
         public static string GetLocalIPAddress()
         {
@@ -117,7 +117,7 @@ namespace RevitAddinOutOfContext_gRPC_Client
                 //System.Threading.Thread.Sleep(1000);
                 new Thread(async () =>
                 {
-                    _requestRun = false;
+                    _canRunRequest = false;
                     System.Threading.Thread.Sleep(1000);
 
                     var procsId = Process.GetCurrentProcess().Id;
@@ -162,12 +162,12 @@ namespace RevitAddinOutOfContext_gRPC_Client
                     //var reply = client.HearHello(new Empty());
                     //Console.WriteLine(reply.Message);
                     string test = "";
-                    _requestRun = true;
+                    _canRunRequest = true;
                 }).Start();
             }
             catch (Exception ex)
             {
-                _requestRun = true;
+                _canRunRequest = true;
                 TaskDialog.Show("Exception", ex.Message);
             }
 
@@ -184,7 +184,7 @@ namespace RevitAddinOutOfContext_gRPC_Client
             try
             {
                 UIApplication uiapp = sender as UIApplication;
-                if (_requestRun)
+                if (_canRunRequest)
                 {
                     HelloToServer(uiapp);
                 }

@@ -3,7 +3,7 @@ A minimal CLI server to run remote commands in Revit built on .NET .NET Framewor
 
 Key Features • How To Use • Support • License
 
-Key Features
+# Key Features
 There are three projects presented here:
 RevitOutOfContext_gRPC_Server - Server project ( .NET 7)  
 
@@ -12,31 +12,31 @@ for the presence of an active server and requests commands from it
 
 RevitOutOfContext_gRPC_Protos/RevitOutOfContext_gRPC_ProtosF - Data schema design (google.protobuf) 
 
-How To Use
+# How To Use
 To clone and run this application, you'll need Git and Visual Studio installed on your computer.
 
 From your command line:
 
-# Clone this repository
+Clone this repository
 $ git clone https://github.com/BIMOpenGroup/RevitOutOfContext_gRPC_Console.git
 
-# Open projects in VS
+Open projects in VS
 
-# Install dependencies from Nuget
+Install dependencies from Nuget
 
-# Compile all projects 
+Compile all projects 
 
-# In RevitAddinOutOfContext_gRPC_Client.addin change dll path  
-# Copy Revit addin file RevitAddinOutOfContext_gRPC_Client.addin to your Revit plugins folder 
+In RevitAddinOutOfContext_gRPC_Client.addin change dll path  
+Copy Revit addin file RevitAddinOutOfContext_gRPC_Client.addin to your Revit plugins folder 
 
-# Run Server from VS
+Run Server from VS
 
-# Send commands 
+Send commands 
 
-# Enjoy :)
+Enjoy :)
 
-Support
+# Support
 Buy Me A Coffee
 
-License
+# License
 MIT

@@ -24,7 +24,6 @@ for the presence of an active server and requests commands from it
 To clone and run this application, you'll need Git and Visual Studio installed on your computer.
 
 * Clone this repository
-$ git clone https://github.com/BIMOpenGroup/RevitOutOfContext_gRPC_Console.git
 
 * Open project`s in VS
 

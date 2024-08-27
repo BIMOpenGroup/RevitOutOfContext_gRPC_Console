@@ -35,7 +35,7 @@ To clone and run this application, you'll need Git and Visual Studio installed o
  
 * Copy addin file RevitAddinOutOfContext_gRPC_Client.addin to your Revit plugins folder 
 
-* Run Server from VS
+* Run Server
 
 * Send commands 
 

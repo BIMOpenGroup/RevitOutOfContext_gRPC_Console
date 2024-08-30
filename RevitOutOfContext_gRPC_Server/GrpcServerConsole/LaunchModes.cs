@@ -72,16 +72,11 @@ namespace GrpcServerConsole
                 var progresDescription = new TaskDescriptionColumn();
                 progresDescription.Alignment = Justify.Left;
                 AnsiConsole.Progress()
-                //.AutoRefresh(false) // Turn off auto refresh
                 .AutoClear(false)   // Do not remove the task list when done
                 .HideCompleted(false)   // Hide tasks as they are completed
                 .Columns(new ProgressColumn[]
                 {
                     progresDescription,    // Task description
-                    //new ProgressBarColumn(),        // Progress bar
-                    //new PercentageColumn(),         // Percentage
-                    //new RemainingTimeColumn(),      // Remaining time
-                    //new SpinnerColumn(),            // Spinner
                 })
                 .Start(ctx =>
                 {

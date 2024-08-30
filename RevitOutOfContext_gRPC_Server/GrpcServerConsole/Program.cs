@@ -3,6 +3,8 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using RevitOutOfContext_gRPC_ProtosF;
 using RSNiniManager;
 using Spectre.Console;
+using System.Threading.Tasks;
+using static GrpcServerConsole.Common;
 
 namespace GrpcServerConsole
 {
@@ -35,6 +37,8 @@ namespace GrpcServerConsole
                 app.Run();
             }).Start();
 
+            string dbPath = Path.Combine(@"C:\temp\sqlite_from_server", "RevitElements.db");
+            dbHelper = new SQLiteHelper(dbPath);
             //var server = new NamedPipeServer("MY_PIPE_NAME");
             //Greeter.BindService(server.ServiceBinder, new GreeterService("MY_PIPE_NAME"));
             //server.Start();
@@ -50,8 +54,8 @@ namespace GrpcServerConsole
                     new SelectionPrompt<string>()
                         .Title($"[underline {Colors.mainColor}]Select launch mode[/]\n")
                         .HighlightStyle(Colors.selectionStyle)
-                        .PageSize(5)
-                        .AddChoices(new[] { "Current Revits", "Run Revits", "Commands", "Exit Revits", "Server off" })
+                        .PageSize(7)
+                        .AddChoices(new[] { "Current Revits", "Run Revits", "Commands", "Export Data From Revits", "Exit Revits", "Server off" })
                     );
                 if (launchMode == "Current Revits")
                 {
@@ -64,6 +68,10 @@ namespace GrpcServerConsole
                 else if (launchMode == "Commands")
                 {
                     launchModes.Commands();
+                }
+                else if (launchMode == "Export Data From Revits")
+                {
+                    launchModes.ExportDataFromRevits();
                 }
                 else if (launchMode == "Exit Revits")
                 {

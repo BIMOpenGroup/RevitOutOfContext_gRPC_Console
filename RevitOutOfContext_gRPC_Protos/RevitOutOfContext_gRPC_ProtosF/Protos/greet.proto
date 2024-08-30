@@ -9,6 +9,7 @@ package greet;
 service Greeter {
   // Sends a greeting
   rpc SayHello (HelloRequest) returns (CommandReply);
+  rpc SendElementInfo (ElementInfoRequest) returns (CommandReply);
   rpc HearCommands (google.protobuf.Empty) returns (CommandReply);
 }
 
@@ -19,6 +20,19 @@ message HelloRequest {
   string revitVersion = 3;
   string procesId = 4;
   string ipAdress = 5;
+}
+
+message ElementInfoRequest {
+   string fileName = 1;
+   string categoryName = 2;
+   string elemName = 3;
+   string elemGuid = 4;
+   string geomParameters = 5;
+   string dataParameters = 6;
+   int32 catCount = 7;
+   int32 catCounter = 8;
+   int32 elemCount = 9;
+   int32 elemCounter = 10;
 }
 
 // The response message containing the greetings.

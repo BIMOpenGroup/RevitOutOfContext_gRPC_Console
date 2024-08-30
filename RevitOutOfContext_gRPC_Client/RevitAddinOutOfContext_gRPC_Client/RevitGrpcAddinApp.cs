@@ -8,13 +8,17 @@ using Grpc.Net.Client;
 using Grpc.Net.Client.Web;
 using RevitOutOfContext_gRPC_ProtosF;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Threading;
+using static Autodesk.AdvanceSteel.Modelling.ProjectData;
 using static Grpc.Health.V1.HealthCheckResponse.Types;
 
 namespace RevitAddinOutOfContext_gRPC_Client
@@ -50,26 +54,6 @@ namespace RevitAddinOutOfContext_gRPC_Client
                 return Result.Cancelled;
             }
         }
-
-        //System.Reflection.Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
-        //{
-        //    if (args.Name.Contains("DiagnosticSource"))
-        //    {
-        //        string filename = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-        //        filename = Path.Combine(filename, "System.Diagnostics.DiagnosticSource.dll");
-
-        //        if (File.Exists(filename))
-        //        {
-        //            return System.Reflection.Assembly.LoadFrom(filename);
-        //        }
-        //    }
-        //    return null;
-        //}
-
-        //System.Reflection.Assembly currentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
-        //{
-        //    return Assembly.LoadFrom("C:\\code\\RevitOutOfContext_gRPC\\RevitOutOfContext_gRPC_Client\\RevitAddinOutOfContext_gRPC_Client\\bin\\Debug\\System.Diagnostics.DiagnosticSource.dll");
-        //}
 
         public static string GetLocalIPAddress()
         {
@@ -148,14 +132,21 @@ namespace RevitAddinOutOfContext_gRPC_Client
                     }
                     if (!string.IsNullOrEmpty(commandReply.Command))
                     {
-                        PostableCommand postCommand;
-                        bool isFind = System.Enum.TryParse(commandReply.Command, out postCommand);
-                        if (isFind)
+                        if (commandReply.Command == "ExportFileData")
                         {
-                            RevitCommandId id_addin = RevitCommandId.LookupPostableCommandId(postCommand);
-                            if (id_addin != null)
+                            ExportFileData(uiapp);
+                        }
+                        else
+                        {
+                            PostableCommand postCommand;
+                            bool isFind = System.Enum.TryParse(commandReply.Command, out postCommand);
+                            if (isFind)
                             {
-                                uiapp.PostCommand(id_addin);
+                                RevitCommandId id_addin = RevitCommandId.LookupPostableCommandId(postCommand);
+                                if (id_addin != null)
+                                {
+                                    uiapp.PostCommand(id_addin);
+                                }
                             }
                         }
                     }
@@ -171,6 +162,157 @@ namespace RevitAddinOutOfContext_gRPC_Client
                 TaskDialog.Show("Exception", ex.Message);
             }
 
+        }
+
+        private async void ExportFileData(UIApplication uiapp)
+        {
+            try
+            {
+                //string dbPath = Path.Combine(@"C:\temp\sqlite", "RevitElements.db");
+                //SQLiteHelper dbHelper = new SQLiteHelper(dbPath);
+                //dbHelper.InitializeDatabase();
+
+                Document doc = uiapp.ActiveUIDocument.Document;
+                Categories cats = doc.Settings.Categories; //ฅ≽^•⩊•^≼ฅ mya
+                string catExcept = "Материалы,Виды,Сведения о проекте,Листы";
+                //List<ElementId> catsId = new List<ElementId>();
+                int catsCount = cats.Size;
+                int catCounter = 0;
+                foreach (Category cat in cats)
+                {
+                    catCounter += 1;
+                    if (!(catExcept.Contains(cat.Name)))
+                    {
+                        ICollection<ElementId> elementsIds = collectorByCatId(doc, cat.Id);
+                        int elemCount = elementsIds.Count;
+                        int elemCounter = 0;
+                        if (elemCount > 0)
+                        {
+                            foreach (ElementId elemId in elementsIds)
+                            {
+                                Element elem = doc.GetElement(elemId);
+                                string unicElemGuid = elem.UniqueId;
+                                (string geomParamsString, string dataParamsString) = paramsParser(elem);
+                                if (!string.IsNullOrEmpty(geomParamsString))
+                                {
+                                    //dbHelper.InsertElement(cat.Name, elem.Name, unicElemGuid, geomParamsString, dataParamsString);
+                                    var response = await _clientHealth.CheckAsync(new HealthCheckRequest());
+                                    var status = response.Status;
+                                    if (status == ServingStatus.Serving)
+                                    {
+                                        elemCounter += 1;
+                                        _client.SendElementInfo(new ElementInfoRequest()
+                                        {
+                                            FileName = doc.Title,
+                                            CategoryName = cat.Name,
+                                            ElemName = elem.Name,
+                                            ElemGuid = unicElemGuid,
+                                            GeomParameters = geomParamsString,
+                                            DataParameters = dataParamsString,
+                                            CatCount = catsCount,
+                                            CatCounter = catCounter,
+                                            ElemCount = elemCount,
+                                            ElemCounter = elemCounter
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                _client.SendElementInfo(new ElementInfoRequest()
+                {
+                    FileName = doc.Title,
+                    CategoryName = "task complite",
+                    ElemName = "task complite",
+                    ElemGuid = "",
+                    GeomParameters = "",
+                    DataParameters = "",
+                    CatCount = catsCount,
+                    CatCounter = catCounter,
+                    ElemCount = 0,
+                    ElemCounter = 0
+                });
+            }
+            catch (Exception ex)
+            {
+                TaskDialog.Show("Exception", ex.Message);
+            }
+        }
+
+        public static List<ElementId> collectorByCatId(Document doc, ElementId catId) //колектор элементов по категории с отчисткой 
+        {
+            FilteredElementCollector fcol = new FilteredElementCollector(doc);
+            ICollection<ElementId> ids_coll = fcol.OfCategoryId(catId).WhereElementIsNotElementType().ToElementIds();
+            List<ElementId> ids_coll_clear = elementLocationTest(ids_coll, doc);
+            return ids_coll_clear;
+        }
+
+        public static List<ElementId> elementLocationTest(ICollection<ElementId> elementIdCollection, Document doc) //тестируем элементы на физическое присутсвие в модели 
+        {
+            List<ElementId> testedElements = new List<ElementId>();
+            foreach (ElementId elemId in elementIdCollection)
+            {
+                if (doc.GetElement(elemId).Location != null)
+                {
+                    testedElements.Add(elemId);
+                }
+            }
+            return testedElements;
+        }
+
+        public static (string, string) paramsParser(Element elem)
+        {
+            List<Parameter> geomParamsList = new List<Parameter>();
+            List<Parameter> dataParamsList = new List<Parameter>();
+            ParameterSet parameters = elem.Parameters;
+            foreach (Parameter p in parameters)
+            {
+                if (p.Definition.ParameterGroup == BuiltInParameterGroup.PG_GEOMETRY)
+                {
+                    geomParamsList.Add(p);
+                }
+                else
+                {
+                    dataParamsList.Add(p);
+                }
+            }
+            string geomParamsString = paramSToString(geomParamsList);
+            string dataParamsString = paramSToString(dataParamsList);
+            return (geomParamsString, dataParamsString);
+        }
+
+        public static string paramSToString(List<Parameter> param_list)
+        {
+            var params_dictionary = new Dictionary<string, Parameter>();
+            List<string> paramnames = new List<string>();
+            List<Parameter> sorted_params = new List<Parameter>();
+            List<string> sorted_params_names = new List<string>();
+            List<string> sorted_params_values = new List<string>();
+            List<ParamForSort> dicts = new List<ParamForSort>();
+            foreach (Parameter p in param_list)
+            {
+                dicts.Add(new ParamForSort { Name = p.Definition.Name, Param = p });
+            }
+            IEnumerable<ParamForSort> query = dicts.OrderBy(pet => pet.Name);
+            foreach (ParamForSort p in query)
+            {
+                sorted_params_names.Add(p.Name);
+                sorted_params_values.Add(p.Param.AsValueString());
+            }
+            params_dictionary.Clear();
+            paramnames.Clear();
+            sorted_params.Clear();
+            string full_string = string.Join(", ", sorted_params_names.Zip(sorted_params_values, (sort_n, sort_p) => sort_n + ": " + sort_p));
+            sorted_params_names.Clear();
+            sorted_params_values.Clear();
+            return full_string;
+        }
+
+        class ParamForSort
+        {
+            public string Name { get; set; }
+            public Parameter Param { get; set; }
         }
 
         public Result OnShutdown(UIControlledApplication uiControlApplication)

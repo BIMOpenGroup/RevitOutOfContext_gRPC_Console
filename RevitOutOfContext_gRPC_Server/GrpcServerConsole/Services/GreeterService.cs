@@ -1,6 +1,7 @@
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using RevitOutOfContext_gRPC_ProtosF;
+using Spectre.Console;
 
 namespace GrpcServerConsole.Services
 {
@@ -27,6 +28,27 @@ namespace GrpcServerConsole.Services
                     Command = clientCond.command
                 });
             }
+            return Task.FromResult(new CommandReply
+            {
+                Command = ""
+            });
+        }
+
+        public override Task<CommandReply> SendElementInfo(ElementInfoRequest request, ServerCallContext context)
+        {
+            if (request.CategoryName != "task complite")
+            {
+                Common.dbHelper.InsertElement(request.FileName, request.CategoryName, request.ElemName, request.ElemGuid, request.GeomParameters, request.DataParameters);
+            }
+            Common.progressUpdater.catCount = request.CatCount;
+            Common.progressUpdater.elemCount = request.ElemCount;
+            Common.progressUpdater.UpdateCatCounter(request.CatCounter, request.CategoryName);
+            Common.progressUpdater.UpdateElemCounter(request.ElemCounter, request.ElemName);
+            //Common.catCount = request.CatCount;
+            //Common.elemCount = request.ElemCount;
+            //Common.catCounter = request.CatCounter;
+            //Common.elemCounter = request.ElemCounter;
+
             return Task.FromResult(new CommandReply
             {
                 Command = ""

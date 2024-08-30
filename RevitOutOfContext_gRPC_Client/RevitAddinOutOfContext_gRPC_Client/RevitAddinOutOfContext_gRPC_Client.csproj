@@ -59,6 +59,9 @@
     <PackageReference Include="GrpcDotNetNamedPipes">
       <Version>1.1.1</Version>
     </PackageReference>
+    <PackageReference Include="Microsoft.Data.Sqlite">
+      <Version>8.0.8</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions">
       <Version>6.0.4</Version>
     </PackageReference>
@@ -108,6 +111,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RevitGrpcAddinApp.cs" />
+    <Compile Include="SQLiteHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -117,6 +121,7 @@
     <Reference Include="RevitOutOfContext_gRPC_ProtosF">
       <HintPath>..\..\RevitOutOfContext_gRPC_Protos\RevitOutOfContext_gRPC_ProtosF\bin\Debug\RevitOutOfContext_gRPC_ProtosF.dll</HintPath>
     </Reference>
+    <Reference Include="System.Data" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

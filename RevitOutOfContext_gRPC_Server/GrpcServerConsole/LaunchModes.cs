@@ -1,6 +1,7 @@
 ﻿using RSNiniManager;
 using Spectre.Console;
 using System.Diagnostics;
+using static GrpcServerConsole.Common;
 
 
 namespace GrpcServerConsole
@@ -60,6 +61,63 @@ namespace GrpcServerConsole
         public void RemoveRevits()
         {
             Common.ChangeCommand("ExitRevit");
+        }
+        public void ExportDataFromRevits()
+        {
+            if (Common.clientCollection != null && Common.clientCollection.GetCollection().Count > 0)
+            {
+                AnsiConsole.Markup($"[{Colors.infoColor}]press [{Colors.attentionColor}]<esc>[/] to return[/]\n");
+                Common.ChangeCommand("ExportFileData");
+                Common.progressUpdater = new ProgressUpdater();
+                var progresDescription = new TaskDescriptionColumn();
+                progresDescription.Alignment = Justify.Left;
+                AnsiConsole.Progress()
+                //.AutoRefresh(false) // Turn off auto refresh
+                .AutoClear(false)   // Do not remove the task list when done
+                .HideCompleted(false)   // Hide tasks as they are completed
+                .Columns(new ProgressColumn[]
+                {
+                    progresDescription,    // Task description
+                    //new ProgressBarColumn(),        // Progress bar
+                    //new PercentageColumn(),         // Percentage
+                    //new RemainingTimeColumn(),      // Remaining time
+                    //new SpinnerColumn(),            // Spinner
+                })
+                .Start(ctx =>
+                {
+                    var task1 = ctx.AddTask("[green]Обработка категорий[/]");
+                    var task2 = ctx.AddTask("[yellow]Обработка елементов[/]");
+
+                    progressUpdater.OnCatCounterUpdated += (currentItem, catName) =>
+                    {
+                        task1.Increment(1);
+                        task1.Description = $"[green]Обработка категории {catName}: {currentItem} из {progressUpdater.catCount}[/]";
+                    };
+
+                    progressUpdater.OnElemCounterUpdated += (currentItem, elemName) =>
+                    {
+                        task2.Increment(1);
+                        task2.Description = $"[blue]Обработка элемента {elemName} {currentItem} из {progressUpdater.elemCount}[/]";
+                    };
+                    while (true)
+                    {
+                        Thread.Sleep(500);
+                        try
+                        {
+                            var cts = new CancellationTokenSource(100);
+                            ConsoleKeyInfo readKeyResult = Task.Run(() => Console.ReadKey(true), cts.Token).Result;
+                            if (readKeyResult.Key == ConsoleKey.Escape)
+                            {
+                                break;
+                            }
+                        }
+                        catch (System.AggregateException ex)
+                        {
+
+                        }
+                    }
+                });
+            }
         }
         public void Commands()
         {
